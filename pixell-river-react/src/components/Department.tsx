@@ -6,15 +6,15 @@ interface Props {
 
 const Department = ({ department }: Props) => {
   return (
-    <section style={{ marginBottom: "25px" }}>
+    <section style={{ marginBottom: "30px" }}>
       <h2>{department.name}</h2>
-      <ul>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "15px" }}>
         {department.employees.map((emp, index) => (
-          <li key={index}>
+          <span key={index} style={{ padding: "8px 15px", backgroundColor: "#e9e1e1", borderRadius: "10px" }}>
             {emp.firstName} {emp.lastName}
-          </li>
+          </span>
         ))}
-      </ul>
+      </div>
     </section>
   );
 };

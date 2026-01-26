@@ -1,4 +1,7 @@
-import type { Employee } from "./Employee";
+export interface Employee {
+  firstName: string;
+  lastName: string;
+}
 
 export interface Department {
   name: string;

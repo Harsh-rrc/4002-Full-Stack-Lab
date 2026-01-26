@@ -14,15 +14,17 @@ const AddEmployeeForm = ({ departments, onAddEmployee }: Props) => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [department, setDepartment] = useState("");
+  const [error, setError] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (firstName.trim().length < 3) {
-    setError("First name must be at least 3 characters");
-    return;
-}
+      setError("First name must be at least 3 characters");
+      return;
+    }
 
+    setError("");
     onAddEmployee(firstName, lastName, department);
 
     setFirstName("");
@@ -33,6 +35,7 @@ const AddEmployeeForm = ({ departments, onAddEmployee }: Props) => {
   return (
     <div style={{ maxWidth: '500px', margin: '10px auto', padding: '5px' }}>
       <h2 style={{ textAlign: 'center', color: '#ec9214', marginBottom: '20px' }}>Add New Employee</h2>
+      {error && <p style={{ color: 'red', marginBottom: '10px' }}>{error}</p>}
       <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '10px' }}>
         <div>
           <label htmlFor="firstName" style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>First Name</label>

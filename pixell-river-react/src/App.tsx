@@ -11,7 +11,7 @@ const App = () => {
   const [departments, setDepartments] =
   useState<DepartmentType[]>(initialDepartments);
 
-  const addEmployee = (firstName, lastName, departmentName) => {
+  const addEmployee = (firstName: string, lastName: string, departmentName: string) => {
   setDepartments(prev =>
     prev.map(dept =>
       dept.name === departmentName

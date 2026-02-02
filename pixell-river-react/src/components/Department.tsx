@@ -6,7 +6,7 @@ interface Props {
 
 const Department = ({ department }: Props) => {
   return (
-    <section style={{ marginBottom: "30px" }}>
+    <section className="department">
       <h2>{department.name}</h2>
       <div style={{ display: "flex", flexWrap: "wrap", gap: "15px" }}>
         {department.employees.map((emp, index) => (

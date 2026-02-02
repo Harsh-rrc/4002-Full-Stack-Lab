@@ -1,49 +1,46 @@
+import { Routes, Route, Navigate } from "react-router-dom";
 import { useState } from "react";
-import Header from "./components/Header";
-import Footer from "./components/Footer";
-import Department from "./components/Department";
-import AddEmployeeForm from "./components/AddEmployeeForm";
-
+import Layout from "./layout/Layout";
+import Employees from "./pages/Employees";
+import Organization from "./pages/Organization";
 import type { Department as DepartmentType } from "./interfaces/Department";
 import { departments as initialDepartments } from "./data/departments";
 
 const App = () => {
+  console.log("App component is rendering");
   const [departments, setDepartments] =
-  useState<DepartmentType[]>(initialDepartments);
+    useState<DepartmentType[]>(initialDepartments);
 
-  const addEmployee = (firstName: string, lastName: string, departmentName: string) => {
-  setDepartments(prev =>
-    prev.map(dept =>
-      dept.name === departmentName
-        ? {
-            ...dept,
-            employees: [
-              ...dept.employees,
-              { firstName, lastName }
-            ]
-          }
-        : dept
-    )
-  );
-};
+  const addEmployee = (
+    firstName: string,
+    lastName: string,
+    departmentName: string
+  ) => {
+    setDepartments(prev =>
+      prev.map(dept =>
+        dept.name === departmentName
+          ? { ...dept, employees: [...dept.employees, { firstName, lastName }] }
+          : dept
+      )
+    );
+  };
 
   return (
-    <>
-      <Header />
-
-      <main style={{ padding: "20px" }}>
-        {departments.map(dept => (
-    <Department key={dept.name} department={dept} />
-    ))}
-
-        <AddEmployeeForm
-          departments={departments}
-          onAddEmployee={addEmployee}
+    <Routes>
+      <Route element={<Layout />}>
+        <Route path="/" element={<Navigate to="/employees" />} />
+        <Route
+          path="/employees"
+          element={
+            <Employees
+              departments={departments}
+              onAddEmployee={addEmployee}
+            />
+          }
         />
-      </main>
-
-      <Footer />
-    </>
+        <Route path="/organization" element={<Organization />} />
+      </Route>
+    </Routes>
   );
 };
 

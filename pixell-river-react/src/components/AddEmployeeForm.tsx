@@ -45,7 +45,7 @@ const AddEmployeeForm = ({ departments, onAddEmployee }: Props) => {
             onChange={e => setFirstName(e.target.value)}
             placeholder="Enter First Name"
             style={{
-              width: '50%',
+              width: '100%',
               padding: '12px',
               fontSize: '16px',
               border: '1px solid #ccc',
@@ -63,7 +63,7 @@ const AddEmployeeForm = ({ departments, onAddEmployee }: Props) => {
             onChange={e => setLastName(e.target.value)}
             placeholder="Enter Last Name"
             style={{
-              width: '50%',
+              width: '100%',
               padding: '12px',
               fontSize: '16px',
               border: '1px solid #ccc',
@@ -80,7 +80,7 @@ const AddEmployeeForm = ({ departments, onAddEmployee }: Props) => {
             value={department}
             onChange={e => setDepartment(e.target.value)}
             style={{
-              width: '50%',
+              width: '100%',
               padding: '12px',
               fontSize: '16px',
               border: '1px solid #ccc',

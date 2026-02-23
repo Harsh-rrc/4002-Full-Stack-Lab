@@ -4,25 +4,14 @@ import Layout from "./layout/Layout";
 import Employees from "./pages/Employees";
 import Organization from "./pages/Organization";
 import type { Department as DepartmentType } from "./interfaces/Department";
-import { departments as initialDepartments } from "./data/departments";
+import { employeeRepo } from "./repositories/employeeRepo";
 
 const App = () => {
   console.log("App component is rendering");
-  const [departments, setDepartments] =
-    useState<DepartmentType[]>(initialDepartments);
+  const [departments, setDepartments] = useState<DepartmentType[]>(employeeRepo.getDepartments());
 
-  const addEmployee = (
-    firstName: string,
-    lastName: string,
-    departmentName: string
-  ) => {
-    setDepartments(prev =>
-      prev.map(dept =>
-        dept.name === departmentName
-          ? { ...dept, employees: [...dept.employees, { firstName, lastName }] }
-          : dept
-      )
-    );
+  const addEmployee = (departments: DepartmentType[]) => {
+    setDepartments(departments);
   };
 
   return (

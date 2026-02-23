@@ -7,10 +7,10 @@ interface Props {
 const Department = ({ department }: Props) => {
   return (
     <section className="department">
-      <h2>{department.name}</h2>
+      <h2 style={{ color: "#213547" }}>{department.name}</h2>
       <div style={{ display: "flex", flexWrap: "wrap", gap: "15px" }}>
         {department.employees.map((emp, index) => (
-          <span key={index} style={{ padding: "8px 15px", backgroundColor: "#e9e1e1", borderRadius: "10px" }}>
+          <span key={index} style={{ padding: "8px 15px", backgroundColor: "#e9e1e1", borderRadius: "10px", color: "#213547" }}>
             {emp.firstName} {emp.lastName}
           </span>
         ))}

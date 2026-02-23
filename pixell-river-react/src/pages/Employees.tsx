@@ -4,14 +4,11 @@ import type { Department as DepartmentType } from "../interfaces/Department";
 
 interface Props {
   departments: DepartmentType[];
-  onAddEmployee: (
-    firstName: string,
-    lastName: string,
-    departmentName: string
-  ) => void;
+  onAddEmployee: (departments: DepartmentType[]) => void;
 }
 
 const Employees = ({ departments, onAddEmployee }: Props) => {
+  console.log("Employees component rendering, departments:", departments);
   return (
     <main style={{ padding: "20px" }}>
       {departments.map(dept => (

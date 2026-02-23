@@ -1,48 +1,52 @@
-import { useState } from "react";
 import type { Department } from "../interfaces/Department";
+import { useFormInput } from "../hooks/useFormInput";
+import { employeeService } from "../services/employeeService";
 
 interface Props {
   departments: Department[];
-  onAddEmployee: (
-    firstName: string,
-    lastName: string,
-    departmentName: string
-  ) => void;
+  onAddEmployee: (departments: Department[]) => void;
 }
 
 const AddEmployeeForm = ({ departments, onAddEmployee }: Props) => {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [department, setDepartment] = useState("");
-  const [error, setError] = useState("");
+  const firstName = useFormInput("");
+  const lastName = useFormInput("");
+  const department = useFormInput("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (firstName.trim().length < 3) {
-      setError("First name must be at least 3 characters");
+    const result = employeeService.createEmployee(
+      firstName.value,
+      lastName.value,
+      department.value
+    );
+
+    if (!result.success) {
+      if (result.field === 'firstName') {
+        firstName.setMessage(result.message || "");
+      } else if (result.field === 'department') {
+        department.setMessage(result.message || "");
+      }
       return;
     }
 
-    setError("");
-    onAddEmployee(firstName, lastName, department);
+    firstName.setMessage("");
+    lastName.setMessage("");
+    department.setMessage("");
 
-    setFirstName("");
-    setLastName("");
-    setDepartment("");
+    onAddEmployee(result.departments!);
   };
 
   return (
     <div style={{ maxWidth: '500px', margin: '10px auto', padding: '5px' }}>
       <h2 style={{ textAlign: 'center', color: '#ec9214', marginBottom: '20px' }}>Add New Employee</h2>
-      {error && <p style={{ color: 'red', marginBottom: '10px' }}>{error}</p>}
       <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '10px' }}>
         <div>
           <label htmlFor="firstName" style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>First Name</label>
           <input
             id="firstName"
-            value={firstName}
-            onChange={e => setFirstName(e.target.value)}
+            value={firstName.value}
+            onChange={firstName.onChange}
             placeholder="Enter First Name"
             style={{
               width: '100%',
@@ -53,14 +57,15 @@ const AddEmployeeForm = ({ departments, onAddEmployee }: Props) => {
               boxSizing: 'border-box'
             }}
           />
+          {firstName.message && <p style={{ color: 'red', marginTop: '5px' }}>{firstName.message}</p>}
         </div>
 
         <div>
           <label htmlFor="lastName" style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Last Name</label>
           <input
             id="lastName"
-            value={lastName}
-            onChange={e => setLastName(e.target.value)}
+            value={lastName.value}
+            onChange={lastName.onChange}
             placeholder="Enter Last Name"
             style={{
               width: '100%',
@@ -71,14 +76,15 @@ const AddEmployeeForm = ({ departments, onAddEmployee }: Props) => {
               boxSizing: 'border-box'
             }}
           />
+          {lastName.message && <p style={{ color: 'red', marginTop: '5px' }}>{lastName.message}</p>}
         </div>
 
         <div>
           <label htmlFor="department" style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Select Department</label>
           <select
             id="department"
-            value={department}
-            onChange={e => setDepartment(e.target.value)}
+            value={department.value}
+            onChange={department.onChange}
             style={{
               width: '100%',
               padding: '12px',
@@ -95,6 +101,7 @@ const AddEmployeeForm = ({ departments, onAddEmployee }: Props) => {
               </option>
             ))}
           </select>
+          {department.message && <p style={{ color: 'red', marginTop: '5px' }}>{department.message}</p>}
         </div>
 
         <button

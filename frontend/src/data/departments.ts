@@ -2,15 +2,13 @@ import type { Department } from "../interfaces/Department";
 
 export const departments: Department[] = [
   {
-    name: "HR",
-    employees: [
-      { firstName: "Jigneshkumar", lastName: "Pandya" }
-    ]
+    id: 1,
+    name: "Finance",
+    employees: [{ firstName: "JigneshKumar", lastName: "Pandya" }]
   },
   {
+    id: 2,
     name: "IT",
-    employees: [
-      { firstName: "Harsh", lastName: "Pandya" }
-    ]
+    employees: [{ firstName: "Harsh", lastName: "Pandya" }]
   }
 ];

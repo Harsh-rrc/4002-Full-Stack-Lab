@@ -3,34 +3,41 @@ import type { Role } from "../interfaces/Role";
 
 interface Props {
   roles: Role[];
+  error: string;
+  isLoading: boolean;
   onAddRole: (roles: Role[]) => void;
 }
 
-const Organization = ({ roles, onAddRole }: Props) => {
+const Organization = ({ roles, error, isLoading, onAddRole }: Props) => {
   return (
     <main style={{ padding: "20px", maxWidth: "800px", margin: "0 auto" }}>
       <h2 style={{ textAlign: "center", color: "#ec9214", marginBottom: "30px" }}>
         Organization Structure
       </h2>
 
-      <div style={{ 
-        backgroundColor: "#f9f9f9", 
-        borderRadius: "8px", 
-        padding: "20px",
-        marginBottom: "30px",
-        boxShadow: "0 2px 4px rgba(0,0,0,0.1)"
-      }}>
+      {error && <p style={{ textAlign: "center", color: "red" }}>{error}</p>}
+      {isLoading && <p style={{ textAlign: "center" }}>Loading roles...</p>}
+
+      <div
+        style={{
+          backgroundColor: "#f9f9f9",
+          borderRadius: "8px",
+          padding: "20px",
+          marginBottom: "30px",
+          boxShadow: "0 2px 4px rgba(0,0,0,0.1)"
+        }}
+      >
         <h3 style={{ marginBottom: "20px", color: "#333" }}>Current Roles</h3>
-        
-        {roles.length === 0 ? (
+
+        {!isLoading && !error && roles.length === 0 ? (
           <p style={{ color: "#666", textAlign: "center" }}>No roles added yet.</p>
         ) : (
           <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
             {roles.map((person, index) => (
-              <li 
-                key={index} 
-                style={{ 
-                  display: "flex", 
+              <li
+                key={`${person.firstName}-${person.lastName}-${person.role}-${index}`}
+                style={{
+                  display: "flex",
                   justifyContent: "space-between",
                   padding: "15px",
                   marginBottom: "10px",
@@ -43,13 +50,15 @@ const Organization = ({ roles, onAddRole }: Props) => {
                 <span style={{ fontWeight: "bold", color: "#333" }}>
                   {person.firstName} {person.lastName}
                 </span>
-                <span style={{ 
-                  color: "#666", 
-                  backgroundColor: "#f0f0f0",
-                  padding: "5px 12px",
-                  borderRadius: "15px",
-                  fontSize: "14px"
-                }}>
+                <span
+                  style={{
+                    color: "#666",
+                    backgroundColor: "#f0f0f0",
+                    padding: "5px 12px",
+                    borderRadius: "15px",
+                    fontSize: "14px"
+                  }}
+                >
                   {person.role}
                 </span>
               </li>

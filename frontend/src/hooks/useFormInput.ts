@@ -9,7 +9,7 @@ export const useFormInput = (initialValue: string) => {
     setMessage("");
   };
 
-  const validate = (validator: (value: string) => string | null) => {
+  const validate = (validator: (currentValue: string) => string | null) => {
     const error = validator(value);
 
     if (error) {
@@ -22,6 +22,7 @@ export const useFormInput = (initialValue: string) => {
 
   return {
     value,
+    setValue,
     onChange,
     message,
     setMessage,

@@ -1,25 +1,20 @@
+import type { Role } from "../interfaces/Role";
 import { useOrganizationForm } from "../hooks/useOrganizationForm";
 
 interface Props {
-  onUpdate: (roles: any) => void;
+  onUpdate: (roles: Role[]) => void;
 }
 
 const AddRoleForm = ({ onUpdate }: Props) => {
-  const { firstName, lastName, role, handleSubmit } =
-    useOrganizationForm(onUpdate);
+  const { firstName, lastName, role, handleSubmit } = useOrganizationForm(onUpdate);
 
   return (
     <div style={{ maxWidth: "500px", margin: "40px auto", padding: "5px" }}>
-      <h3 style={{ textAlign: "center", color: "#ec9214", marginBottom: "20px" }}>
-        Add New Role
-      </h3>
-      
+      <h3 style={{ textAlign: "center", color: "#ec9214", marginBottom: "20px" }}>Add New Role</h3>
+
       <form onSubmit={handleSubmit} style={{ display: "grid", gap: "15px" }}>
         <div>
-          <label 
-            htmlFor="firstName" 
-            style={{ display: "block", marginBottom: "5px", fontWeight: "bold" }}
-          >
+          <label htmlFor="firstName" style={{ display: "block", marginBottom: "5px", fontWeight: "bold" }}>
             First Name
           </label>
           <input
@@ -36,16 +31,10 @@ const AddRoleForm = ({ onUpdate }: Props) => {
               boxSizing: "border-box"
             }}
           />
-          {firstName.message && (
-            <p style={{ color: "red", marginTop: "5px" }}>{firstName.message}</p>
-          )}
         </div>
 
         <div>
-          <label 
-            htmlFor="lastName" 
-            style={{ display: "block", marginBottom: "5px", fontWeight: "bold" }}
-          >
+          <label htmlFor="lastName" style={{ display: "block", marginBottom: "5px", fontWeight: "bold" }}>
             Last Name
           </label>
           <input
@@ -65,10 +54,7 @@ const AddRoleForm = ({ onUpdate }: Props) => {
         </div>
 
         <div>
-          <label 
-            htmlFor="role" 
-            style={{ display: "block", marginBottom: "5px", fontWeight: "bold" }}
-          >
+          <label htmlFor="role" style={{ display: "block", marginBottom: "5px", fontWeight: "bold" }}>
             Role
           </label>
           <input
@@ -85,10 +71,13 @@ const AddRoleForm = ({ onUpdate }: Props) => {
               boxSizing: "border-box"
             }}
           />
-          {role.message && (
-            <p style={{ color: "red", marginTop: "5px" }}>{role.message}</p>
-          )}
         </div>
+
+        {(firstName.message || lastName.message || role.message) && (
+          <p style={{ color: "red", marginTop: "5px" }}>
+            {firstName.message || lastName.message || role.message}
+          </p>
+        )}
 
         <button
           type="submit"

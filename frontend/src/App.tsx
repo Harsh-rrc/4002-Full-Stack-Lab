@@ -1,50 +1,80 @@
-import { Routes, Route, Navigate } from "react-router-dom";
-import { useState } from "react";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { useEffect, useState } from "react";
 import Layout from "./layout/Layout";
 import Employees from "./pages/Employees";
 import Organization from "./pages/Organization";
-import type { Department as DepartmentType } from "./interfaces/Department";
+import type { Department } from "./interfaces/Department";
 import type { Role } from "./interfaces/Role";
-import { employeeRepo } from "./repositories/employeeRepo";
-import { organizationRepo } from "./repositories/organizationRepo";
+import { employeeService } from "./services/employeeService";
+import { organizationService } from "./services/organizationService";
 
 const App = () => {
-  console.log("App component is rendering");
-  const [departments, setDepartments] = useState<DepartmentType[]>(employeeRepo.getDepartments());
-  const [roles, setRoles] = useState<Role[]>(organizationRepo.getRoles());
+  const [departments, setDepartments] = useState<Department[]>([]);
+  const [roles, setRoles] = useState<Role[]>([]);
+  const [employeeError, setEmployeeError] = useState("");
+  const [roleError, setRoleError] = useState("");
+  const [isLoadingEmployees, setIsLoadingEmployees] = useState(true);
+  const [isLoadingRoles, setIsLoadingRoles] = useState(true);
 
-  const addEmployee = (departments: DepartmentType[]) => {
-    setDepartments(departments);
-  };
+  useEffect(() => {
+    const loadEmployees = async () => {
+      try {
+        const departmentData = await employeeService.getDepartments();
+        setDepartments(departmentData);
+        setEmployeeError("");
+      } catch {
+        setEmployeeError("Could not load employee data from the backend.");
+      } finally {
+        setIsLoadingEmployees(false);
+      }
+    };
 
-  const addRole = (roles: Role[]) => {
-    setRoles(roles);
-  };
+    const loadRoles = async () => {
+      try {
+        const roleData = await organizationService.getRoles();
+        setRoles(roleData);
+        setRoleError("");
+      } catch {
+        setRoleError("Could not load role data from the backend.");
+      } finally {
+        setIsLoadingRoles(false);
+      }
+    };
+
+    void loadEmployees();
+    void loadRoles();
+  }, []);
 
   return (
-    <Routes>
-      <Route element={<Layout />}>
-        <Route path="/" element={<Navigate to="/employees" />} />
-        <Route
-          path="/employees"
-          element={
-            <Employees
-              departments={departments}
-              onAddEmployee={addEmployee}
-            />
-          }
-        />
-        <Route
-          path="/organization"
-          element={
-            <Organization
-              roles={roles}
-              onAddRole={addRole}
-            />
-          }
-        />
-      </Route>
-    </Routes>
+    <BrowserRouter>
+      <Routes>
+        <Route element={<Layout />}>
+          <Route path="/" element={<Navigate to="/employees" replace />} />
+          <Route
+            path="/employees"
+            element={
+              <Employees
+                departments={departments}
+                error={employeeError}
+                isLoading={isLoadingEmployees}
+                onAddEmployee={setDepartments}
+              />
+            }
+          />
+          <Route
+            path="/organization"
+            element={
+              <Organization
+                roles={roles}
+                error={roleError}
+                isLoading={isLoadingRoles}
+                onAddRole={setRoles}
+              />
+            }
+          />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
 };
 

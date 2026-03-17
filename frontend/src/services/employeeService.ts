@@ -1,36 +1,42 @@
+import type { Department } from "../interfaces/Department";
 import { employeeRepo } from "../repositories/employeeRepo";
 
 export const employeeService = {
-  createEmployee(
-    firstName: string,
-    lastName: string,
-    departmentName: string
-  ): { success: boolean; message?: string; field?: string; departments?: any } {
+  async getDepartments(): Promise<Department[]> {
+    return await employeeRepo.getDepartments();
+  },
 
-    const departments = employeeRepo.getDepartments();
-
-    const departmentExists = departments.some(
-      dept => dept.name === departmentName
-    );
-
-    if (!departmentExists) {
-      return { success: false, message: "Department does not exist.", field: "department" };
-    }
-
-    if (firstName.trim().length < 3) {
+  async createEmployee(firstName: string, lastName: string, departmentName: string) {
+    if (firstName.trim().length < 2) {
       return {
-        success: false,
-        message: "First name must be at least 3 characters.",
-        field: "firstName"
+        success: false as const,
+        message: "First name must be at least 2 characters."
       };
     }
 
-    const updatedDepartments = employeeRepo.createEmployee(
-      firstName,
-      lastName,
-      departmentName
-    );
+    if (lastName.trim().length < 2) {
+      return {
+        success: false as const,
+        message: "Last name must be at least 2 characters."
+      };
+    }
 
-    return { success: true, departments: updatedDepartments };
+    if (!departmentName.trim()) {
+      return {
+        success: false as const,
+        message: "Please select a department."
+      };
+    }
+
+    try {
+      const updatedDepartments = await employeeRepo.createEmployee(firstName, lastName, departmentName);
+
+      return { success: true as const, data: updatedDepartments };
+    } catch (error) {
+      return {
+        success: false as const,
+        message: error instanceof Error ? error.message : "Unable to create employee."
+      };
+    }
   }
 };

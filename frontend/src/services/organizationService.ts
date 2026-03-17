@@ -1,25 +1,32 @@
+import type { Role } from "../interfaces/Role";
 import { organizationRepo } from "../repositories/organizationRepo";
 
 export const organizationService = {
-  createRole(firstName: string, lastName: string, role: string) {
-    const roles = organizationRepo.getRoles();
+  async getRoles(): Promise<Role[]> {
+    return await organizationRepo.getRoles();
+  },
 
-    if (firstName.trim().length < 3) {
-      return { success: false, message: "First name must be at least 3 characters." };
+  async createRole(firstName: string, lastName: string, role: string) {
+    if (firstName.trim().length < 2) {
+      return { success: false as const, message: "First name must be at least 2 characters." };
     }
 
-    const roleExists = roles.some(r => r.role === role);
-
-    if (roleExists) {
-      return { success: false, message: "This role is already occupied." };
+    if (lastName.trim().length < 2) {
+      return { success: false as const, message: "Last name must be at least 2 characters." };
     }
 
-    const updatedRoles = organizationRepo.createRole(
-      firstName,
-      lastName,
-      role
-    );
+    if (role.trim().length < 2) {
+      return { success: false as const, message: "Role must be at least 2 characters." };
+    }
 
-    return { success: true, roles: updatedRoles };
+    try {
+      const updatedRoles = await organizationRepo.createRole(firstName, lastName, role);
+      return { success: true as const, data: updatedRoles };
+    } catch (error) {
+      return {
+        success: false as const,
+        message: error instanceof Error ? error.message : "Unable to create role."
+      };
+    }
   }
 };

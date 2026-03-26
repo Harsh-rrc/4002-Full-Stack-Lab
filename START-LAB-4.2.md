@@ -17,7 +17,6 @@ Important:
 - Frontend uses port 5173
 - Postgres Docker maps localhost:5433 -> container 5432
 - Database URL is already set in backend/.env for port 5433
-- Work on main branch only
 
 Files added for Lab 4.2:
 - backend/.env

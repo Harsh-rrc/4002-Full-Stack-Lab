@@ -23,6 +23,7 @@ export const employeeRepo = {
       headers: {
         "Content-Type": "application/json"
       },
+      credentials: "include",
       body: JSON.stringify({ firstName, lastName, departmentName })
     });
 

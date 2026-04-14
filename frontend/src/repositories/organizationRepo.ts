@@ -23,6 +23,7 @@ export const organizationRepo = {
       headers: {
         "Content-Type": "application/json"
       },
+      credentials: "include",
       body: JSON.stringify({ firstName, lastName, role })
     });
 

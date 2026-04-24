@@ -38,4 +38,27 @@ export const employeeRepository = {
       },
     });
   },
+
+  async deleteEmployee(id: number) {
+    const employee = await prisma.employee.findUnique({
+      where: { id },
+    });
+
+    if (!employee) {
+      throw new Error("Employee not found.");
+    }
+
+    await prisma.employee.delete({
+      where: { id },
+    });
+
+    return prisma.department.findMany({
+      include: {
+        employees: true,
+      },
+      orderBy: {
+        id: "asc",
+      },
+    });
+  },
 };

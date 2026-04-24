@@ -26,4 +26,24 @@ export const employeeController = {
 
     return res.status(201).json(result.data);
   },
+
+  async deleteEmployee(req: Request, res: Response) {
+    const id = parseInt(req.params.id, 10);
+
+    if (isNaN(id)) {
+      return res.status(400).json({
+        message: "Invalid employee ID.",
+      });
+    }
+
+    const result = await employeeService.deleteEmployee(id);
+
+    if (!result.success) {
+      return res.status(400).json({
+        message: result.message,
+      });
+    }
+
+    return res.status(200).json(result.data);
+  },
 };

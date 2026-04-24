@@ -35,5 +35,21 @@ export const employeeRepo = {
     }
 
     return data;
+  },
+
+  async deleteEmployee(id: number): Promise<Department[]> {
+    const response = await fetch(`${API_URL}/${id}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+
+    const text = await response.text();
+    const data = text ? JSON.parse(text) : null;
+
+    if (!response.ok) {
+      throw new Error(data?.message || "Failed to delete employee.");
+    }
+
+    return data;
   }
 };

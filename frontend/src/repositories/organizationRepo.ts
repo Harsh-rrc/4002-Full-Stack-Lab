@@ -35,5 +35,21 @@ export const organizationRepo = {
     }
 
     return data;
+  },
+
+  async deleteRole(id: number): Promise<Role[]> {
+    const response = await fetch(`${API_URL}/${id}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+
+    const text = await response.text();
+    const data = text ? JSON.parse(text) : null;
+
+    if (!response.ok) {
+      throw new Error(data?.message || "Failed to delete role.");
+    }
+
+    return data;
   }
 };

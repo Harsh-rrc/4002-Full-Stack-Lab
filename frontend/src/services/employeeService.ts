@@ -32,5 +32,17 @@ export const employeeService = {
         message: error instanceof Error ? error.message : "Unable to create employee."
       };
     }
+  },
+
+  async deleteEmployee(id: number) {
+    try {
+      const updatedDepartments = await employeeRepo.deleteEmployee(id);
+      return { success: true, data: updatedDepartments };
+    } catch (error) {
+      return {
+        success: false,
+        message: error instanceof Error ? error.message : "Unable to delete employee."
+      };
+    }
   }
 };

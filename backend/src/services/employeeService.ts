@@ -20,4 +20,20 @@ export const employeeService = {
       };
     }
   },
+
+  async deleteEmployee(id: number) {
+    try {
+      const data = await employeeRepository.deleteEmployee(id);
+
+      return {
+        success: true,
+        data,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: error instanceof Error ? error.message : "Unable to delete employee.",
+      };
+    }
+  },
 };

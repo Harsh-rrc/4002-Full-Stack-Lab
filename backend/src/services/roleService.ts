@@ -20,4 +20,20 @@ export const roleService = {
       };
     }
   },
+
+  async deleteRole(id: number) {
+    try {
+      const roles = await roleRepository.deleteRole(id);
+
+      return {
+        success: true,
+        roles,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: error instanceof Error ? error.message : "Unable to delete role.",
+      };
+    }
+  },
 };

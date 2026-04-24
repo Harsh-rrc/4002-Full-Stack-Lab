@@ -1,23 +1,41 @@
-import { useOrganizationForm } from "../hooks/useOrganizationForm";
+import { useFormInput } from "../hooks/useFormInput";
+import { useCreateRole } from "../hooks/useRoleMutations";
 
-interface Props {
-  onUpdate: (roles: any) => void;
-}
+const AddRoleForm = () => {
+  const createRole = useCreateRole();
+  const firstName = useFormInput("");
+  const lastName = useFormInput("");
+  const role = useFormInput("");
 
-const AddRoleForm = ({ onUpdate }: Props) => {
-  const { firstName, lastName, role, handleSubmit } =
-    useOrganizationForm(onUpdate);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const result = await createRole.mutateAsync({
+      firstName: firstName.value,
+      lastName: lastName.value,
+      role: role.value,
+    });
+
+    if (!result.success) {
+      firstName.setMessage(result.message || "");
+      return;
+    }
+
+    firstName.setValue("");
+    lastName.setValue("");
+    role.setValue("");
+  };
 
   return (
     <div style={{ maxWidth: "500px", margin: "40px auto", padding: "5px" }}>
       <h3 style={{ textAlign: "center", color: "#ec9214", marginBottom: "20px" }}>
         Add New Role
       </h3>
-      
+
       <form onSubmit={handleSubmit} style={{ display: "grid", gap: "15px" }}>
         <div>
-          <label 
-            htmlFor="firstName" 
+          <label
+            htmlFor="firstName"
             style={{ display: "block", marginBottom: "5px", fontWeight: "bold" }}
           >
             First Name
@@ -33,7 +51,7 @@ const AddRoleForm = ({ onUpdate }: Props) => {
               fontSize: "16px",
               border: "1px solid #ccc",
               borderRadius: "4px",
-              boxSizing: "border-box"
+              boxSizing: "border-box",
             }}
           />
           {firstName.message && (
@@ -42,8 +60,8 @@ const AddRoleForm = ({ onUpdate }: Props) => {
         </div>
 
         <div>
-          <label 
-            htmlFor="lastName" 
+          <label
+            htmlFor="lastName"
             style={{ display: "block", marginBottom: "5px", fontWeight: "bold" }}
           >
             Last Name
@@ -59,14 +77,14 @@ const AddRoleForm = ({ onUpdate }: Props) => {
               fontSize: "16px",
               border: "1px solid #ccc",
               borderRadius: "4px",
-              boxSizing: "border-box"
+              boxSizing: "border-box",
             }}
           />
         </div>
 
         <div>
-          <label 
-            htmlFor="role" 
+          <label
+            htmlFor="role"
             style={{ display: "block", marginBottom: "5px", fontWeight: "bold" }}
           >
             Role
@@ -82,7 +100,7 @@ const AddRoleForm = ({ onUpdate }: Props) => {
               fontSize: "16px",
               border: "1px solid #ccc",
               borderRadius: "4px",
-              boxSizing: "border-box"
+              boxSizing: "border-box",
             }}
           />
           {role.message && (
@@ -92,6 +110,7 @@ const AddRoleForm = ({ onUpdate }: Props) => {
 
         <button
           type="submit"
+          disabled={createRole.isPending}
           style={{
             padding: "12px 24px",
             fontSize: "16px",
@@ -101,10 +120,10 @@ const AddRoleForm = ({ onUpdate }: Props) => {
             borderRadius: "4px",
             cursor: "pointer",
             alignSelf: "start",
-            marginTop: "10px"
+            marginTop: "10px",
           }}
         >
-          Create Role
+          {createRole.isPending ? "Creating..." : "Create Role"}
         </button>
       </form>
     </div>
@@ -112,3 +131,4 @@ const AddRoleForm = ({ onUpdate }: Props) => {
 };
 
 export default AddRoleForm;
+

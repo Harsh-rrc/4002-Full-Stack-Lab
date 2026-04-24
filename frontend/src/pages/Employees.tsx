@@ -1,36 +1,38 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import AddEmployeeForm from "../components/AddEmployeeForm";
-import { employeeService } from "../services/employeeService";
-import type { Department } from "../interfaces/Department";
-import { AuthSignedIn, AuthSignedOut } from "../auth/AuthContext";
-import { useAuthMode } from "../auth/AuthContext";
+import { useDepartments } from "../hooks/useDepartments";
+import { useDeleteEmployee } from "../hooks/useEmployeeMutations";
+import { AuthSignedIn, AuthSignedOut, useAuthMode } from "../auth/AuthContext";
 
 const Employees = () => {
   const { clerkEnabled } = useAuthMode();
-  const [departments, setDepartments] = useState<Department[]>([]);
-  const [error, setError] = useState("");
+  const { data: departments, isLoading, error: queryError } = useDepartments();
+  const deleteEmployee = useDeleteEmployee();
+  const [deleteMessage, setDeleteMessage] = useState("");
 
-  useEffect(() => {
-    const loadDepartments = async () => {
-      try {
-        const data = await employeeService.getDepartments();
-        setDepartments(data);
-        setError("");
-      } catch {
-        setError("Could not load employee data from the backend.");
-      }
-    };
-
-    loadDepartments();
-  }, []);
+  const handleDelete = async (id: number) => {
+    setDeleteMessage("");
+    const result = await deleteEmployee.mutateAsync(id);
+    if (!result.success) {
+      setDeleteMessage(result.message || "Failed to delete employee.");
+    }
+  };
 
   return (
     <main style={{ padding: "20px", maxWidth: "900px", margin: "0 auto" }}>
       <h2 style={{ color: "#ec9214", textAlign: "center", marginBottom: "20px" }}>Employees</h2>
 
-      {error && <p style={{ color: "red", textAlign: "center" }}>{error}</p>}
+      {isLoading && <p style={{ textAlign: "center" }}>Loading employees...</p>}
 
-      {departments.map((dept) => (
+      {queryError && (
+        <p style={{ color: "red", textAlign: "center" }}>
+          Could not load employee data from the backend.
+        </p>
+      )}
+
+      {deleteMessage && <p style={{ color: "red", textAlign: "center" }}>{deleteMessage}</p>}
+
+      {departments?.map((dept) => (
         <div
           key={dept.id}
           style={{
@@ -45,27 +47,78 @@ const Employees = () => {
           {dept.employees.length === 0 ? (
             <p style={{ color: "#666" }}>No employees in this department yet.</p>
           ) : (
-            dept.employees.map((emp, index) => (
-              <p key={`${dept.id}-${emp.firstName}-${emp.lastName ?? ""}-${index}`} style={{ margin: "8px 0" }}>
-                {emp.firstName} {emp.lastName}
-              </p>
+            dept.employees.map((emp) => (
+              <div
+                key={emp.id}
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  margin: "8px 0",
+                  padding: "8px 12px",
+                  backgroundColor: "white",
+                  borderRadius: "4px",
+                }}
+              >
+                <span>
+                  {emp.firstName} {emp.lastName}
+                </span>
+                <AuthSignedIn>
+                  <button
+                    onClick={() => handleDelete(emp.id)}
+                    disabled={deleteEmployee.isPending}
+                    style={{
+                      padding: "4px 10px",
+                      backgroundColor: "#dc3545",
+                      color: "white",
+                      border: "none",
+                      borderRadius: "4px",
+                      cursor: "pointer",
+                      fontSize: "12px",
+                    }}
+                  >
+                    {deleteEmployee.isPending ? "Deleting..." : "Delete"}
+                  </button>
+                </AuthSignedIn>
+              </div>
             ))
           )}
         </div>
       ))}
 
       <AuthSignedIn>
-        <AddEmployeeForm departments={departments} onAddEmployee={setDepartments} />
+        <AddEmployeeForm />
       </AuthSignedIn>
 
       <AuthSignedOut>
-        <div style={{ marginTop: "20px", padding: "18px", border: "1px solid #ddd", borderRadius: "8px", textAlign: "center", backgroundColor: "#fff8ef" }}>
+        <div
+          style={{
+            marginTop: "20px",
+            padding: "18px",
+            border: "1px solid #ddd",
+            borderRadius: "8px",
+            textAlign: "center",
+            backgroundColor: "#fff8ef",
+          }}
+        >
           <p style={{ marginTop: 0 }}>
             {clerkEnabled
-              ? "You must be logged in to add a new employee."
-              : "Add your real Clerk publishable key to enable sign in, then log in to add a new employee."}
+              ? "You must be logged in to add or delete employees."
+              : "Add your real Clerk publishable key to enable sign in, then log in to manage employees."}
           </p>
-          <a href="/sign-in" style={{ padding: "10px 18px", backgroundColor: "#ec9214", color: "white", borderRadius: "4px", textDecoration: "none", display: "inline-block" }}>Log In</a>
+          <a
+            href="/sign-in"
+            style={{
+              padding: "10px 18px",
+              backgroundColor: "#ec9214",
+              color: "white",
+              borderRadius: "4px",
+              textDecoration: "none",
+              display: "inline-block",
+            }}
+          >
+            Log In
+          </a>
         </div>
       </AuthSignedOut>
     </main>

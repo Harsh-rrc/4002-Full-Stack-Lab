@@ -12,6 +12,7 @@ export const roleRepository = {
     });
 
     return roles.map((item) => ({
+      id: item.id,
       firstName: item.employee.firstName,
       lastName: item.employee.lastName,
       role: item.title,
@@ -76,6 +77,37 @@ export const roleRepository = {
     });
 
     return roles.map((item) => ({
+      id: item.id,
+      firstName: item.employee.firstName,
+      lastName: item.employee.lastName,
+      role: item.title,
+    }));
+  },
+
+  async deleteRole(id: number) {
+    const role = await prisma.role.findUnique({
+      where: { id },
+    });
+
+    if (!role) {
+      throw new Error("Role not found.");
+    }
+
+    await prisma.role.delete({
+      where: { id },
+    });
+
+    const roles = await prisma.role.findMany({
+      include: {
+        employee: true,
+      },
+      orderBy: {
+        id: "asc",
+      },
+    });
+
+    return roles.map((item) => ({
+      id: item.id,
       firstName: item.employee.firstName,
       lastName: item.employee.lastName,
       role: item.title,

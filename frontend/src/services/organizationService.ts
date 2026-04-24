@@ -20,5 +20,18 @@ export const organizationService = {
         message: error instanceof Error ? error.message : "Unable to create role."
       };
     }
+  },
+
+  async deleteRole(id: number) {
+    try {
+      const updatedRoles = await organizationRepo.deleteRole(id);
+      return { success: true, roles: updatedRoles };
+    } catch (error) {
+      return {
+        success: false,
+        message: error instanceof Error ? error.message : "Unable to delete role."
+      };
+    }
   }
 };
+
